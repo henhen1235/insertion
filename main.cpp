@@ -1,5 +1,6 @@
 #include <iostream>
 #include "dNode.h"
+#include <cstdlib>
 
 using namespace std;
 
@@ -42,17 +43,18 @@ void addfunc(dNode *& treehead){
         int tempnumpos = 0;
         int numarr[50];
         int numarrpos = 0;
-        while(true){
+
+        while(pos < sizeof(num)){
             char tempnum[4];
             if(num[pos] != ' '){
                 tempnum[tempnumpos] = num[pos];
                 tempnumpos++;
                 pos++;
             }
-            else if(num[pos] == ' '){
+            else if(num[pos] == ' ' || num[pos] == '\0'){
                 tempnum[tempnumpos] = '\0';
                 tempnumpos = 0;
-                int finnum = (int)tempnum - 48;
+                int finnum = atoi(tempnum);
                 numarr[numarrpos] = finnum;
                 numarrpos++;
                 pos++;
