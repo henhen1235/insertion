@@ -8,14 +8,17 @@ using namespace std;
 
 void addfunc(dNode *& treehead);
 void placenode(int newint, dNode *& headnode);
-void display(dNode* top);
+void displays(dNode* top);
 void displayrunner(dNode* tempposition, int depth);
+void removes(dNode*& headnode);
+void checkers(dNode*& headnode);
 
 int main(){
     dNode* treehead = NULL;
     while(true){
       char i2n[50]; // ask user for what they want to do
         char add[50] = "add";
+	char find[50] = "find";
         char remove[50] = "remove";
         char display[50] = "display";
         cout << endl << "What would you like to do?: ";
@@ -24,15 +27,78 @@ int main(){
             addfunc(treehead);
         }
         else if(strcmp(i2n, remove) == 0){
-        }
+	  removes(treehead);
+	}
+	else if(strcmp(i2n, find) == 0){
+	  checkers(treehead);
+	}
         else if(strcmp(i2n, display) == 0){
-	  display(treehead);
+	  displays(treehead);
 	}
         else{
             cout << "Invalid input options are: add, remove, and display" << endl;
         }
     }
     return 0;
+}
+
+void checkers(dNode*& headnode){
+  int in;
+  cout << endl << "What do you want to check?: ";
+  cin >> in;
+  cout << headnode->getint() << endl;
+  dNode* tempnode = headnode;
+  while(true){
+    if(tempnode->getint() < in){
+      if(tempnode->getRight() == NULL){
+	cout << "This number does not exist. right" << endl;
+	return;
+      }
+      cout << "right once" << endl;
+      tempnode = tempnode->getRight();      
+    }
+    else if(tempnode->getint() > in){
+      if(tempnode->getLeft() == NULL){
+	cout << "This number does not exist. left" << endl;
+        return;
+      }
+      cout << "left once" << endl;
+      tempnode = tempnode->getLeft();
+    }
+    else{
+      cout << "This number does exist" << endl;
+      return;
+      }
+    }
+  }
+
+
+void removes(dNode*& headnode){
+  int in;
+  cout << endl << "Would you rather read in from console or file?: ";
+  cin >> in;
+  dNode* tempnode = headnode;
+  cout << tempnode->getint() <<  endl;
+  while(true){
+    if(tempnode->getint() < in){
+      if(tempnode->getRight() != NULL){
+	tempnode = tempnode->getRight();
+      }
+      cout << "This number does not exist." << endl;
+      return;
+    }
+    if(tempnode->getint() > in){
+      if(tempnode->getLeft() != NULL){
+        tempnode = tempnode->getLeft();
+      }
+      cout << "This number does not exist." << endl;
+      return;
+    }
+    else{
+      if(tempnode->getLeft() == NULL && tempnode->getRight() == NULL){
+      }
+    }
+  }
 }
 
 void addfunc(dNode *& treehead){
@@ -74,7 +140,7 @@ void addfunc(dNode *& treehead){
         }
 	
         for(int i = 0; i < numarrpos; i++){
-	  placenode(numarr[i]);
+	  placenode(numarr[i], treehead);
         }
     }
     else if(strcmp(in, fil) == 0){
@@ -85,7 +151,7 @@ void addfunc(dNode *& treehead){
       ifstream inputFile((name + txt));
       int num;
       while (inputFile >> num) {
-        placenode(num);
+        placenode(num, treehead);
       }
       inputFile.close();
     }
@@ -96,25 +162,26 @@ void addfunc(dNode *& treehead){
 }
 
 void placenode(int newint, dNode *& headnode){
+  cout << "printed: " << newint << endl;
   if(headnode == NULL){
-    dNode* newnode= new dNode(headnode);
+    dNode* newnode= new dNode(newint);
     headnode = newnode;
-    break;
+    return;
   }
 
   dNode* tempnode = headnode;
   while(true){
   if(tempnode->getint() > newint){
     if(tempnode->getLeft() == NULL){
-      dNode* newnode = new dNode(headnode);
+      dNode* newnode = new dNode(newint);
       tempnode->setLeft(newnode);
       break;
     }
     tempnode = tempnode->getLeft();
   }
-  else(tempnode->getint() <= newint){
+  else if(tempnode->getint() <= newint){
     if(tempnode->getRight() == NULL){
-      dNode* newnode = new dNode(headnode);
+      dNode* newnode = new dNode(newint);
       tempnode->setRight(newnode);
       break;
     }
@@ -123,20 +190,15 @@ void placenode(int newint, dNode *& headnode){
   }
 }
 
-void display(dNode* top){//diplay everything
+void displays(dNode* top){//diplay everything
   if (top == NULL) {
     return;
   }
   int depth = 0;
-  int start = 1;
-  displayrunner(top, depth);
+  displayrunner(top, depth); 
 }
 
 void displayrunner(dNode* tempposition, int depth){// display runner function
-  if(tempposition->getLeft() == NULL && tempposition->getRight() == NULL){
-    return;
-  }
-
   if(tempposition->getLeft() != NULL){//go down the right nodes
     displayrunner(tempposition->getLeft(), depth + 1);
   }
