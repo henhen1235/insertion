@@ -102,10 +102,14 @@ void removes(dNode*& headnode){
     else{
       if(tempnode->getLeft() == NULL && tempnode->getRight() == NULL){
         dNode* tempnode2 = tempnode->getParent();
-        if(tempnode2->getint() >= tempnode->getint()){
+        if(tempnode2 == NULL){
+          delete headnode;
+          headnode = NULL;
+        }
+        if(tempnode2->getLeft() == tempnode){
           tempnode2->setLeft(NULL);
         }
-        else if(tempnode2->getint() < tempnode->getint()){
+        else{
           tempnode2->setRight(NULL);
         }
         delete tempnode;
@@ -114,13 +118,31 @@ void removes(dNode*& headnode){
       else if(tempnode->getLeft() == NULL && tempnode->getRight() != NULL){
         dNode* parentnode = tempnode->getParent();
         dNode* newtempnode = tempnode->getRight();
-        parentnode->setRight(newtempnode);
+        if(tempnode == headnode){
+          headnode = newtempnode;
+        }
+        if(parentnode->getLeft() == tempnode){
+          parentnode->setLeft(newtempnode);
+        }
+        else{
+          parentnode->setRight(newtempnode);
+        }
+        newtempnode->setParent(parentnode);
         delete tempnode;
       }
       else if(tempnode->getLeft() != NULL && tempnode->getRight() == NULL){
         dNode* parentnode = tempnode->getParent();
         dNode* newtempnode = tempnode->getLeft();
-        parentnode->setLeft(newtempnode);
+        if(tempnode == headnode){
+          headnode = newtempnode;
+        }
+        if(parentnode->getLeft() == tempnode){
+          parentnode->setLeft(newtempnode);
+        }
+        else{
+          parentnode->setRight(newtempnode);
+        }
+        newtempnode->setParent(parentnode);
         delete tempnode;
       }
       else{
@@ -131,12 +153,16 @@ void removes(dNode*& headnode){
         }
         int tempint = removednode->getint();
         tempnode->setint(tempint);
+
         dNode* tempnode2 = removednode->getParent();
-        if(tempnode2->getint() >= tempnode->getint()){
-          tempnode2->setLeft(NULL);
+        if(tempnode2->getLeft() == removednode){
+          tempnode2->setLeft(removednode->getRight());
         }
-        else if(tempnode2->getint() < tempnode->getint()){
-          tempnode2->setRight(NULL);
+        else{
+          tempnode2->setRight(removednode->getRight());
+        }
+        if(removednode->getRight() != NULL){
+          removednode->getRight()->setParent(tempnode2);
         }
         delete removednode;
       }
@@ -245,7 +271,6 @@ void displays(dNode* top){//diplay everything
 
 void displayrunner(dNode* tempposition, int depth){// display runner function
   if(tempposition->getLeft() != NULL){//go down the right nodes
-    cout << "left" << tempposition->getint() << endl;
     displayrunner(tempposition->getLeft(), depth + 1);
   }
   for(int x = 0; x < depth; x++){//orint
