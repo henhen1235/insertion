@@ -20,9 +20,12 @@ class dNode{
   void setLeft(dNode* newnode);//setting the left node
   dNode* getRight();//getting the right node
   dNode* getLeft();//getting the left node
+  void setParent(dNode* newnode);//setting the left node
+  dNode* getParent();//getting the right node
  private:
   int stored;//student pointer
   dNode* rightnode;//left pointer
   dNode* leftnode;//right node pointer
+  dNode* parentnode;
 };
 #endif

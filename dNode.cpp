@@ -14,6 +14,7 @@ dNode::dNode(int nstudent) {
   stored = nstudent; // set char as stored
   rightnode = NULL;//set right node to null for now
   leftnode = NULL;//set left node to null for now
+  parentnode = NULL;
 }
 
 dNode::~dNode(){//destruct
@@ -43,4 +44,12 @@ dNode* dNode::getRight(){
 
 dNode* dNode::getLeft(){
   return leftnode;//returning the left node
+}
+
+void dNode::setParent(dNode* newnode){
+  parentnode = newnode; //setting the left node up
+}
+
+dNode* dNode::getParent(){
+  return parentnode;//returning the right node
 }
