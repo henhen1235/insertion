@@ -12,32 +12,41 @@ void displays(dNode* top);
 void displayrunner(dNode* tempposition, int depth);
 void removes(dNode*& headnode);
 void checkers(dNode*& headnode);
+void deleter(dNode* tempposition);
 
 int main(){
     dNode* treehead = NULL;
     while(true){
       char i2n[50]; // ask user for what they want to do
-        char add[50] = "add";
-	char find[50] = "find";
-        char remove[50] = "remove";
-        char display[50] = "display";
-        cout << endl << "What would you like to do?: ";
-        cin.getline(i2n, 50);
-        if(strcmp(i2n, add) == 0){
-            addfunc(treehead);
+      char add[50] = "add";
+	    char find[50] = "find";
+      char remove[50] = "remove";
+      char display[50] = "display";
+      char quit[50] = "quit";
+      cout << endl << "What would you like to do?: ";
+      cin.getline(i2n, 50);
+      if(strcmp(i2n, add) == 0){
+          addfunc(treehead);
+      }
+      else if(strcmp(i2n, remove) == 0){
+	      removes(treehead);
+	    }
+	    else if(strcmp(i2n, find) == 0){
+	      checkers(treehead);
+	    }
+      else if(strcmp(i2n, display) == 0){
+	      displays(treehead);
+	    }
+      else if(strcmp(i2n, quit) == 0){
+        if(treehead == NULL){
+          break;
         }
-        else if(strcmp(i2n, remove) == 0){
-	  removes(treehead);
-	}
-	else if(strcmp(i2n, find) == 0){
-	  checkers(treehead);
-	}
-        else if(strcmp(i2n, display) == 0){
-	  displays(treehead);
-	}
-        else{
-            cout << "Invalid input options are: add, remove, find, and display" << endl;
-        }
+        deleter(treehead);
+        break;
+      }
+      else{
+        cout << "Invalid input options are: add, remove, find, and display" << endl;
+      }
     }
     return 0;
 }
@@ -50,18 +59,16 @@ void checkers(dNode*& headnode){
   while(true){
     if(tempnode->getint() < in){
       if(tempnode->getRight() == NULL){
-	cout << "This number does not exist. right" << endl;
+	cout << "This number does not exist." << endl;
 	return;
       }
-      cout << "right once" << endl;
       tempnode = tempnode->getRight();      
     }
     else if(tempnode->getint() > in){
       if(tempnode->getLeft() == NULL){
-	cout << "This number does not exist. left" << endl;
+	cout << "This number does not exist." << endl;
         return;
       }
-      cout << "left once" << endl;
       tempnode = tempnode->getLeft();
     }
     else{
@@ -74,21 +81,15 @@ void checkers(dNode*& headnode){
 
 void removes(dNode*& headnode){
   int in;
-  cout << endl << "What do you want to check?: ";
+  cout << endl << "What do you want to delete??: ";
   cin >> in;
   dNode* tempnode = headnode;
-  dNode* prevnode= headnode;
-  bool frl = true;
-  bool rl = true;
-  bool tester = false;
   while(true){
     if(tempnode->getint() < in){
       if(tempnode->getRight() == NULL){
 	      cout << "This number does not exist. right" << endl;
 	      return;
       }
-      cout << "right once" << endl;
-      rl = true;
       tempnode = tempnode->getRight();      
     }
     else if(tempnode->getint() > in){
@@ -96,73 +97,51 @@ void removes(dNode*& headnode){
 	      cout << "This number does not exist. left" << endl;
         return;
       }
-      cout << "left once" << endl;
-      rl = false;
       tempnode = tempnode->getLeft();
     }
     else{
-      cout << "DNE";
       if(tempnode->getLeft() == NULL && tempnode->getRight() == NULL){
-        if(frl == true){
-          prevnode->setRight(NULL);
+        dNode* tempnode2 = tempnode->getParent();
+        if(tempnode2->getint() >= tempnode->getint()){
+          tempnode2->setLeft(NULL);
         }
-        else if(frl == false){
-          prevnode->setLeft(NULL);
+        else if(tempnode2->getint() < tempnode->getint()){
+          tempnode2->setRight(NULL);
         }
         delete tempnode;
+
       }
       else if(tempnode->getLeft() == NULL && tempnode->getRight() != NULL){
-        int tempint = tempnode->getRight()->getint();
-        tempnode->setint(tempint);
-        dNode* newtempnode = tempnode;
-        tempnode = tempnode->getRight();
-        newtempnode->setRight(NULL);
+        dNode* parentnode = tempnode->getParent();
+        dNode* newtempnode = tempnode->getRight();
+        parentnode->setRight(newtempnode);
         delete tempnode;
       }
       else if(tempnode->getLeft() != NULL && tempnode->getRight() == NULL){
-        int tempint = tempnode->getLeft()->getint();
-        tempnode->setint(tempint);
-        dNode* newtempnode = tempnode;
-        tempnode = tempnode->getLeft();
-        newtempnode->setLeft(NULL);
+        dNode* parentnode = tempnode->getParent();
+        dNode* newtempnode = tempnode->getLeft();
+        parentnode->setLeft(newtempnode);
         delete tempnode;
       }
       else{
         dNode* removednode = tempnode;
         removednode = removednode->getRight();
-        bool checks = true;
         while(removednode->getLeft() != NULL){
-          bool checks = false;
-          if(removednode->getLeft()->getLeft() == NULL){
-            dNode* tempremovednode = removednode;
-            removednode = removednode->getLeft();
-            tempremovednode->setLeft(NULL);
-          }
+          removednode = removednode->getLeft();
         }
-        if(checks == true){
-          int tempint = removednode->getint();
-          tempnode->setRight(NULL);
-          removednode->setint(tempint);
-          delete tempnode;
+        int tempint = removednode->getint();
+        tempnode->setint(tempint);
+        dNode* tempnode2 = removednode->getParent();
+        if(tempnode2->getint() >= tempnode->getint()){
+          tempnode2->setLeft(NULL);
         }
-        else{
-          int tempint = removednode->getint();
-          removednode->setint(tempint);
-          delete tempnode;
+        else if(tempnode2->getint() < tempnode->getint()){
+          tempnode2->setRight(NULL);
         }
+        delete removednode;
       }
       return;
     }
-    if(tester == true){
-      if(frl == true){
-        prevnode = prevnode->getRight();
-      }
-      if(frl == false){
-        prevnode = prevnode->getLeft();
-      }
-    }
-    frl = rl;
-    tester = true;
   }
 }
 
@@ -227,7 +206,6 @@ void addfunc(dNode *& treehead){
 }
 
 void placenode(int newint, dNode *& headnode){
-  cout << "printed: " << newint << endl;
   if(headnode == NULL){
     dNode* newnode= new dNode(newint);
     headnode = newnode;
@@ -236,7 +214,7 @@ void placenode(int newint, dNode *& headnode){
 
   dNode* tempnode = headnode;
   while(true){
-  if(tempnode->getint() > newint){
+  if(tempnode->getint() >= newint){
     if(tempnode->getLeft() == NULL){
       dNode* newnode = new dNode(newint);
       newnode->setParent(tempnode);
@@ -245,7 +223,7 @@ void placenode(int newint, dNode *& headnode){
     }
     tempnode = tempnode->getLeft();
   }
-  else if(tempnode->getint() <= newint){
+  else if(tempnode->getint() < newint){
     if(tempnode->getRight() == NULL){
       dNode* newnode = new dNode(newint);
       newnode->setParent(tempnode);
@@ -267,6 +245,7 @@ void displays(dNode* top){//diplay everything
 
 void displayrunner(dNode* tempposition, int depth){// display runner function
   if(tempposition->getLeft() != NULL){//go down the right nodes
+    cout << "left" << tempposition->getint() << endl;
     displayrunner(tempposition->getLeft(), depth + 1);
   }
   for(int x = 0; x < depth; x++){//orint
@@ -276,5 +255,15 @@ void displayrunner(dNode* tempposition, int depth){// display runner function
   if(tempposition->getRight() != NULL){//go down the left nodes
     displayrunner(tempposition->getRight(), depth + 1);
   }
+}
+
+void deleter(dNode* tempposition){// display runner function
+  if(tempposition->getLeft() != NULL){//go down the right nodes
+    deleter(tempposition->getLeft());
+  }
+  if(tempposition->getRight() != NULL){//go down the left nodes
+    deleter(tempposition->getRight());
+  }
+  delete tempposition;
 }
  
