@@ -45,7 +45,7 @@ int main(){
         break;
       }
       else{
-        cout << "Invalid input options are: add, remove, find, and display" << endl;
+        cout << "Invalid input options are:quit, add, remove, find, and display" << endl;
       }
     }
     return 0;
@@ -55,6 +55,7 @@ void checkers(dNode*& headnode){
   int in;
   cout << endl << "What do you want to check?: ";
   cin >> in;
+  cin.ignore();
   dNode* tempnode = headnode;
   while(true){
     if(tempnode->getint() < in){
@@ -83,6 +84,7 @@ void removes(dNode*& headnode){
   int in;
   cout << endl << "What do you want to delete??: ";
   cin >> in;
+  cin.ignore();
   dNode* tempnode = headnode;
   while(true){
     if(tempnode->getint() < in){
@@ -101,11 +103,12 @@ void removes(dNode*& headnode){
     }
     else{
       if(tempnode->getLeft() == NULL && tempnode->getRight() == NULL){
-        dNode* tempnode2 = tempnode->getParent();
-        if(tempnode2 == NULL){
+	if(tempnode == headnode){
           delete headnode;
           headnode = NULL;
+	  return;
         }
+        dNode* tempnode2 = tempnode->getParent();
         if(tempnode2->getLeft() == tempnode){
           tempnode2->setLeft(NULL);
         }
@@ -120,6 +123,7 @@ void removes(dNode*& headnode){
         dNode* newtempnode = tempnode->getRight();
         if(tempnode == headnode){
           headnode = newtempnode;
+	  return; 
         }
         if(parentnode->getLeft() == tempnode){
           parentnode->setLeft(newtempnode);
@@ -135,7 +139,8 @@ void removes(dNode*& headnode){
         dNode* newtempnode = tempnode->getLeft();
         if(tempnode == headnode){
           headnode = newtempnode;
-        }
+	  return;
+	}
         if(parentnode->getLeft() == tempnode){
           parentnode->setLeft(newtempnode);
         }
@@ -217,6 +222,7 @@ void addfunc(dNode *& treehead){
       cout << "Please type file name" << endl;
       string name;
       cin >> name;
+      cin.ignore();
       string txt = ".txt";
       ifstream inputFile((name + txt));
       int num;

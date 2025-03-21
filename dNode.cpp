@@ -20,6 +20,7 @@ dNode::dNode(int nstudent) {
 dNode::~dNode(){//destruct
   rightnode = NULL;
   leftnode = NULL;
+  parentnode = NULL;
 }
 
 void dNode::setint(int nchar){// setting char
