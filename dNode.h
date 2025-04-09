@@ -22,10 +22,13 @@ class dNode{
   dNode* getLeft();//getting the left node
   void setParent(dNode* newnode);//setting the left node
   dNode* getParent();//getting the right node
- private:
+  bool getred();
+  void setred(bool checker);
+private:
   int stored;//student pointer
   dNode* rightnode;//left pointer
   dNode* leftnode;//right node pointer
   dNode* parentnode;
+  bool red;
 };
 #endif

@@ -15,6 +15,7 @@ dNode::dNode(int nstudent) {
   rightnode = NULL;//set right node to null for now
   leftnode = NULL;//set left node to null for now
   parentnode = NULL;
+  red = true;
 }
 
 dNode::~dNode(){//destruct
@@ -54,3 +55,11 @@ void dNode::setParent(dNode* newnode){
 dNode* dNode::getParent(){
   return parentnode;//returning the right node
 }
+
+bool dNode::getred(){
+  return red;//return color
+}
+void dNode::setred(bool checker){
+  red = checker;//set color
+}
+
