@@ -34,8 +34,10 @@ int main(){
 	      addconosle(treehead);
       }
       else if(strcmp(i2n, display) == 0){
+        displays(treehead);
       }
       else if(strcmp(i2n, quit) == 0){
+        deleter(treehead);
       }
       else{
         cout << "Invalid input options are: file, console, display, and quit" << endl;
@@ -123,17 +125,23 @@ dNode* runner(dNode*& current, dNode*& treehead){
             dNode* tempgrandparent = current->getParent()->getParent();
             if(tempparent->getRight() != NULL){
               dNode* tempright = tempparent->getRight();
-              tempgrandparent->setRight(tempright);
+              tempgrandparent->setLeft(tempright);
+              tempright->setParent(tempgrandparent);
             }
             tempparent->setRight(tempgrandparent);
             tempparent->setred(false);
             tempgrandparent->setred(true);
-            if(current->getParent()->getParent() == treehead){
+            if(tempgrandparent == treehead){
               treehead = tempparent;
               tempparent->setParent(NULL);
               return;
             }
             tempparent->setParent(tempgrandparent->getParent());
+            if(tempgrandparent->getParent()->getLeft() == tempgrandparent){
+              tempgrandparent->getParent()->setLeft(tempparent);
+            }
+            else{tempgrandparent->getParent()->setRight(tempparent);}
+            tempgrandparent->setParent(tempparent);
             runner(tempparent, treehead);
         }
       }
@@ -143,9 +151,12 @@ dNode* runner(dNode*& current, dNode*& treehead){
           if(current->getRight() != NULL){
             dNode* tempright = current->getRight();
             tempparent->setLeft(tempright);
+            tempright->setParent(tempparent);
           }
           tempparent->getParent()->setRight(current);
+          current->setParent(tempparent->getParent());
           current->setRight(tempparent);
+          tempparent->setParent(current);
           runner(tempparent, treehead);
         }
         else if(current->getParent()->getRight() == current){// case 4 left triangle
@@ -154,16 +165,22 @@ dNode* runner(dNode*& current, dNode*& treehead){
           if(tempparent->getLeft() != NULL){
             dNode* tempLeft = tempparent->getLeft();
             tempgrandparent->setRight(tempLeft);
+            tempLeft->setParent(tempgrandparent);
           }
-          tempparent->setRight(tempgrandparent);
+          tempparent->setLeft(tempgrandparent);
           tempparent->setred(false);
           tempgrandparent->setred(true);
-          if(current->getParent()->getParent() == treehead){
+          if(tempgrandparent == treehead){
             treehead = tempparent;
             tempparent->setParent(NULL);
             return;
         }
         tempparent->setParent(tempgrandparent->getParent());
+        if(tempgrandparent->getParent()->getLeft() == tempgrandparent){
+          tempgrandparent->getParent()->setLeft(tempparent);
+        }
+        else{tempgrandparent->getParent()->setRight(tempparent);}
+          tempgrandparent->setParent(tempparent);
           runner(tempparent, treehead);
         }
       }
@@ -185,36 +202,6 @@ dNode* uncle(dNode* current){
   }
 }
 
-
-void placenode(int newint, dNode *& headnode){
-  if(headnode == NULL){
-    dNode* newnode= new dNode(newint);
-    headnode = newnode;
-    return;
-  }
-
-  dNode* tempnode = headnode;
-  while(true){
-  if(tempnode->getint() >= newint){
-    if(tempnode->getLeft() == NULL){
-      dNode* newnode = new dNode(newint);
-      newnode->setParent(tempnode);
-      tempnode->setLeft(newnode);
-      break;
-    }
-    tempnode = tempnode->getLeft();
-  }
-  else if(tempnode->getint() < newint){
-    if(tempnode->getRight() == NULL){
-      dNode* newnode = new dNode(newint);
-      newnode->setParent(tempnode);
-      tempnode->setRight(newnode);
-      break;
-    }
-    tempnode = tempnode->getRight();
-  }
-  }
-}
 
 void displays(dNode* top){//diplay everything
   if (top == NULL) {
