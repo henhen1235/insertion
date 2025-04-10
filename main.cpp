@@ -95,38 +95,80 @@ dNode* runner(dNode*& current, dNode*& treehead){
     return;
   }
   dNode* uncler = uncle(current);
-  if(uncler->getred() == true && current->getParent()->getred() == true && uncler->getParent()->getred() == false){
-    uncler->setred(false);
-    current->getParent()->setred(false);
-    uncler->getParent()->setred(true);
-    dNode* tempgrandparent = uncler->getParent();
-    runner(tempgrandparent, treehead);
-  }
-  else if(uncler->getred() == false && current->getParent()->getred() == true){//left side cases
-    if(current->getParent()->getParent()->getLeft() == current->getParent()){
-      if(current->getParent()->getRight() == current){ //case1 left triange
-        dNode* tempparent = current->getParent();
-        if(current->getLeft() != NULL){
-          dNode* templeft = current->getLeft();
-          tempparent->setRight(templeft);
+  if(uncler != NULL){
+    if(uncler->getred() == true && current->getParent()->getred() == true && uncler->getParent()->getred() == false){
+      uncler->setred(false);
+      current->getParent()->setred(false);
+      uncler->getParent()->setred(true);
+      dNode* tempgrandparent = uncler->getParent();
+      runner(tempgrandparent, treehead);
+    }
+    else if(uncler->getred() == false && current->getParent()->getred() == true){//left side cases
+      if(current->getParent()->getParent()->getLeft() == current->getParent()){
+        if(current->getParent()->getRight() == current){ //case1 left triange
+          dNode* tempparent = current->getParent();
+          if(current->getLeft() != NULL){
+            dNode* templeft = current->getLeft();
+            tempparent->setRight(templeft);
+            templeft->setParent(tempparent);
+          }
+          current->getParent()->getParent()->setLeft(current);
+          current->setParent(tempparent->getParent());
+          current->setLeft(tempparent);
+          tempparent->setParent(current);
+          runner(tempparent, treehead);
         }
-        current->getParent()->getParent()->setLeft(current);
-        current->setLeft(tempparent);
-        runner(tempparent, treehead);
+        else if(current->getParent()->getLeft() == current){//case2 left line
+            dNode* tempparent = current->getParent();
+            dNode* tempgrandparent = current->getParent()->getParent();
+            if(tempparent->getRight() != NULL){
+              dNode* tempright = tempparent->getRight();
+              tempgrandparent->setRight(tempright);
+            }
+            tempparent->setRight(tempgrandparent);
+            tempparent->setred(false);
+            tempgrandparent->setred(true);
+            if(current->getParent()->getParent() == treehead){
+              treehead = tempparent;
+              tempparent->setParent(NULL);
+              return;
+            }
+            tempparent->setParent(tempgrandparent->getParent());
+            runner(tempparent, treehead);
+        }
       }
-      else if(current->getParent()->getLeft() == current){//case2
-
+      else if(current->getParent()->getParent()->getRight() == current->getParent()){//right side cases
+        if(current->getParent()->getLeft() == current){//case 3 right triangle
+          dNode* tempparent = current->getParent();
+          if(current->getRight() != NULL){
+            dNode* tempright = current->getRight();
+            tempparent->setLeft(tempright);
+          }
+          tempparent->getParent()->setRight(current);
+          current->setRight(tempparent);
+          runner(tempparent, treehead);
+        }
+        else if(current->getParent()->getRight() == current){// case 4 left triangle
+          dNode* tempparent = current->getParent();
+          dNode* tempgrandparent = current->getParent()->getParent();
+          if(tempparent->getLeft() != NULL){
+            dNode* tempLeft = tempparent->getLeft();
+            tempgrandparent->setRight(tempLeft);
+          }
+          tempparent->setRight(tempgrandparent);
+          tempparent->setred(false);
+          tempgrandparent->setred(true);
+          if(current->getParent()->getParent() == treehead){
+            treehead = tempparent;
+            tempparent->setParent(NULL);
+            return;
+        }
+        tempparent->setParent(tempgrandparent->getParent());
+          runner(tempparent, treehead);
+        }
       }
     }
-    else if(current->getParent()->getParent()->getRight() == current->getParent()){//right side cases
-      if(current->getParent()->getLeft() == current){//case 3 right triangle
-        
-      }
-      else if(current->getParent()->getRight() == current){// case 4 left triangle
-
-      }
-    }
-}
+  }
 }
 
 dNode* uncle(dNode* current){
