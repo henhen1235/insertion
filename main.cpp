@@ -7,11 +7,9 @@
 using namespace std;
 
 void addconosle(dNode *& treehead);
-void placenode(int newint, dNode *& headnode);
+void files(dNode *& treehead);
 void displays(dNode* top);
 void displayrunner(dNode* tempposition, int depth);
-void removes(dNode*& headnode);
-void checkers(dNode*& headnode);
 void deleter(dNode* tempposition);
 void inserter(int num, dNode* & treehead);
 dNode* uncle(dNode* current);
@@ -28,7 +26,7 @@ int main(){
       cout << endl << "What would you like to do? (file, console, display, quit): ";
       cin >> i2n;
       if(strcmp(i2n, add) == 0){ // adding from file
-
+        files(treehead);
       }
       else if(strcmp(i2n, console) == 0){ // adding from conosle
 	      addconosle(treehead);
@@ -47,6 +45,19 @@ int main(){
     return 0;
 }
 
+void files(dNode *& treehead){
+  cout << "Please type file name" << endl;
+      string name;
+      cin >> name;
+      string txt = ".txt";
+      ifstream inputFile((name + txt));
+      int num;
+      while (inputFile >> num) {
+        inserter(num, treehead);
+      }
+      inputFile.close();
+    }
+    
 void addconosle(dNode *& treehead){
     int num;
     cout << "Enter the number you would like to add: ";
