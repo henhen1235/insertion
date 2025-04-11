@@ -100,7 +100,7 @@ void runner(dNode*& current, dNode*& treehead){
 
   dNode* uncler = uncle(current);
   if(uncler != NULL){
-    if(uncler->getred() == true && current->getParent()->getred() == true && uncler->getParent()->getred() == false){
+    if(uncler->getred() == true && current->getParent()->getred() == true && uncler->getParent()->getred() == false){//recolor works
       cout << "doing case recoloring yes uncle" << endl;
       uncler->setred(false);
       current->getParent()->setred(false);
@@ -124,30 +124,38 @@ void runner(dNode*& current, dNode*& treehead){
           tempparent->setParent(current);
           runner(tempparent, treehead);
         }
-        else if(current->getParent()->getLeft() == current){//case2 left line
+        else if(current->getParent()->getLeft() == current){//case2 left line yes uncle WORKS
           cout << "doing case 2 yes uncle" << endl;
             dNode* tempparent = current->getParent();
             dNode* tempgrandparent = current->getParent()->getParent();
-            if(tempparent->getRight() != NULL){
-              dNode* tempright = tempparent->getRight();
-              tempgrandparent->setLeft(tempright);
+            dNode* tempright = tempparent->getRight();
+            dNode* tempgreatgrandparent = tempgrandparent->getParent();
+
+            tempparent->setRight(tempgrandparent);
+            tempgrandparent->setParent(tempparent);
+
+
+            tempgrandparent->setLeft(tempright);
+            if(tempright != NULL){
               tempright->setParent(tempgrandparent);
             }
-            tempparent->setRight(tempgrandparent);
             tempparent->setred(false);
             tempgrandparent->setred(true);
-            if(tempgrandparent == treehead){
-              treehead = tempparent;
-              tempparent->setParent(NULL);
-              return;
+
+          tempparent->setParent(tempgreatgrandparent);
+
+          if(tempgreatgrandparent != NULL){
+            if(tempgreatgrandparent->getLeft() == tempgrandparent){
+              tempgreatgrandparent->setLeft(tempparent);
             }
-            tempparent->setParent(tempgrandparent->getParent());
-            if(tempgrandparent->getParent()->getLeft() == tempgrandparent){
-              tempgrandparent->getParent()->setLeft(tempparent);
+            else{
+              tempgreatgrandparent->setRight(tempparent);
             }
-            else{tempgrandparent->getParent()->setRight(tempparent);}
-            tempgrandparent->setParent(tempparent);
-            runner(tempparent, treehead);
+        }
+        else{
+          treehead = tempparent;
+        }
+        runner(tempparent, treehead);
         }
       }
       else if(current->getParent()->getParent()->getRight() == current->getParent()){//right side cases
@@ -177,18 +185,23 @@ void runner(dNode*& current, dNode*& treehead){
           tempparent->setLeft(tempgrandparent);
           tempparent->setred(false);
           tempgrandparent->setred(true);
-          if(tempgrandparent == treehead){
-            treehead = tempparent;
-            tempparent->setParent(NULL);
-            return;
-        }
-        tempparent->setParent(tempgrandparent->getParent());
-        if(tempgrandparent->getParent()->getLeft() == tempgrandparent){
-          tempgrandparent->getParent()->setLeft(tempparent);
-        }
-        else{tempgrandparent->getParent()->setRight(tempparent);}
+          dNode* tempgreatgrandparent = tempgrandparent->getParent();
           tempgrandparent->setParent(tempparent);
-          runner(tempparent, treehead);
+          tempparent->setParent(tempgreatgrandparent);
+
+          if(tempgreatgrandparent != NULL){
+            if(tempgreatgrandparent->getLeft() == tempgrandparent){
+              tempgreatgrandparent->setLeft(tempparent);
+            }
+            else{
+              tempgreatgrandparent->setRight(tempparent);
+            }
+        }
+        else{
+          treehead = tempparent;
+        }
+        runner(tempgrandparent, treehead);
+
         }
       }
     }
@@ -210,30 +223,38 @@ void runner(dNode*& current, dNode*& treehead){
           tempparent->setParent(current);
           runner(tempparent, treehead);
         }
-        else if(current->getParent()->getLeft() == current){//case2 left line
+        else if(current->getParent()->getLeft() == current){//case2 left line No uncle WOKRS
           cout << "doing case 2 no uncle" << endl;
             dNode* tempparent = current->getParent();
             dNode* tempgrandparent = current->getParent()->getParent();
-            if(tempparent->getRight() != NULL){
-              dNode* tempright = tempparent->getRight();
-              tempgrandparent->setLeft(tempright);
+            dNode* tempright = tempparent->getRight();
+            dNode* tempgreatgrandparent = tempgrandparent->getParent();
+
+            tempparent->setRight(tempgrandparent);
+            tempgrandparent->setParent(tempparent);
+
+
+            tempgrandparent->setLeft(tempright);
+            if(tempright != NULL){
               tempright->setParent(tempgrandparent);
             }
-            tempparent->setRight(tempgrandparent);
             tempparent->setred(false);
             tempgrandparent->setred(true);
-            if(tempgrandparent == treehead){
-              treehead = tempparent;
-              tempparent->setParent(NULL);
-              return;
+
+          tempparent->setParent(tempgreatgrandparent);
+
+          if(tempgreatgrandparent != NULL){
+            if(tempgreatgrandparent->getLeft() == tempgrandparent){
+              tempgreatgrandparent->setLeft(tempparent);
             }
-            tempparent->setParent(tempgrandparent->getParent());
-            if(tempgrandparent->getParent()->getLeft() == tempgrandparent){
-              tempgrandparent->getParent()->setLeft(tempparent);
+            else{
+              tempgreatgrandparent->setRight(tempparent);
             }
-            else{tempgrandparent->getParent()->setRight(tempparent);}
-            tempgrandparent->setParent(tempparent);
-            runner(tempparent, treehead);
+        }
+        else{
+          treehead = tempparent;
+        }
+        runner(tempparent, treehead);
         }
       }
       else if(current->getParent()->getParent()->getRight() == current->getParent()){//right side cases
@@ -263,18 +284,24 @@ void runner(dNode*& current, dNode*& treehead){
           tempparent->setLeft(tempgrandparent);
           tempparent->setred(false);
           tempgrandparent->setred(true);
-          if(tempgrandparent == treehead){
-            treehead = tempparent;
-            tempparent->setParent(NULL);
-            return;
-        }
-        tempparent->setParent(tempgrandparent->getParent());
-        if(tempgrandparent->getParent()->getLeft() == tempgrandparent){
-          tempgrandparent->getParent()->setLeft(tempparent);
-        }
-        else{tempgrandparent->getParent()->setRight(tempparent);}
+
+          dNode* tempgreatgrandparent = tempgrandparent->getParent();
           tempgrandparent->setParent(tempparent);
-          runner(tempparent, treehead);
+          tempparent->setParent(tempgreatgrandparent);
+
+          if(tempgreatgrandparent != NULL){
+            if(tempgreatgrandparent->getLeft() == tempgrandparent){
+              tempgreatgrandparent->setLeft(tempparent);
+            }
+            else{
+              tempgreatgrandparent->setRight(tempparent);
+            }
+        }
+        else{
+          treehead = tempparent;
+        }
+        runner(tempgrandparent, treehead);
+
         }
       }
     }
