@@ -123,9 +123,10 @@ void deleteone(dNode*& treehead){
         dele->getLeft()->setParent(child);
         child->setLeft(dele->getLeft());
         dele->setLeft(NULL);
-        if(dele == treehead);
+        if(dele == treehead){
           child->setParent(NULL);
           treehead = child;
+        }
       }
 
       if(redbool == false){
@@ -147,9 +148,42 @@ void deletefix(dNode*& tempnode, dNode*& treehead){
   if(sibling->getred() == true){
     sibling->setred(false);
     tempnode->getParent()->setred(true);
-  }
 
+    dNode* granparent = tempnode->getParent()->getParent();
+    dNode* templeft = sibling->getLeft();
+    tempnode->getParent()->setParent(sibling);
+    tempnode->getParent()->setLeft(templeft);
+    templeft->setParent(tempnode->getParent());
+    sibling->setLeft(tempnode->getParent());
+    sibling->setParent(granparent);
+    sibling = tempnode->getParent()->getRight();
+  }
+  if(sibling->getred() == false && sibling->getLeft()->getred() == false && sibling->getRight()->getred() == false){
+    sibling->setred(true);
+    tempnode = sibling->getParent();
+  }
+  if(sibling->getred() == false && sibling->getLeft()->getred() == true && sibling->getRight()->getred() == false){
+    sibling->getLeft()->setred(false);
+    sibling->setred(true);
+
+    dNode* templeft = sibling->getLeft();
+    tempnode->getParent()->setRight(templeft);
+    templeft->setParent(tempnode->getParent());
+    if(templeft->getRight() != NULL){
+      dNode* saved = templeft->getRight();
+      sibling->setLeft(saved);
+    }
+    else{
+      sibling->setLeft(NULL);
+    }
+    templeft->setRight(sibling);
+    sibling->setParent(templeft);
+    sibling = sibling->getParent();
+    
+  }
 }
+
+
 
 void files(dNode *& treehead){
   cout << "Please type file name" << endl;
