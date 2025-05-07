@@ -68,6 +68,10 @@ void transplant(dNode*& topnode, dNode*& botnode, dNode*& treehead){
 }
 
 void deleteone(dNode*& treehead){
+  if(treehead == NULL){
+    cout << "empty";
+    return;
+  }
   int in;
   cout << endl << "What do you want to delete??: ";
   cin >> in;
@@ -83,7 +87,7 @@ void deleteone(dNode*& treehead){
     }
     else if(tempnode->getint() > in){
       if(tempnode->getLeft() == NULL){
-	      cout << "This number does not exist. left" << endl;
+	        cout << "This number does not exist. left" << endl;
         return;
       }
       tempnode = tempnode->getLeft();
@@ -96,6 +100,9 @@ void deleteone(dNode*& treehead){
         child = tempnode->getRight();
         dNode* dele = tempnode;
         transplant(dele, child, treehead);
+        if(redbool == false){
+          deletefix(child, treehead);
+        }
         delete dele;
       }
       else if(tempnode->getLeft() != NULL && tempnode->getRight() == NULL){ // right child is NULL
@@ -103,6 +110,9 @@ void deleteone(dNode*& treehead){
         child = tempnode->getLeft();
         dNode* dele = tempnode;
         transplant(dele, child, treehead);
+        if(redbool == false){
+          deletefix(child, treehead);
+        }
         delete dele;
       }
       else if(tempnode->getLeft() != NULL && tempnode->getRight() != NULL) {// both are not NULL
@@ -132,18 +142,27 @@ void deleteone(dNode*& treehead){
 
         delete dele;
       }
+      return;
     }
   }
 }
 
 
 void deletefix(dNode*& tempnode, dNode*& treehead){
-  dNode* sibling;
-  if(tempnode == tempnode->getParent()->getLeft()){
-    sibling = tempnode->getParent()->getRight();
+  while(tempnode != treehead && tempnode != NULL && tempnode->getred() == false){
+  dNode* sibling = NULL;
+  if(tempnode->getParent() != NULL){
+    if(tempnode == tempnode->getParent()->getLeft()){
+      sibling = tempnode->getParent()->getRight();
+    }
+    else{
+      sibling = tempnode->getParent()->getLeft();
+    }
   }
-  else{
-    sibling = tempnode->getParent()->getLeft();
+
+  if(sibling == NULL){
+    tempnode = tempnode->getParent();
+    continue;
   }
 
 
@@ -160,7 +179,7 @@ void deletefix(dNode*& tempnode, dNode*& treehead){
     sibling->setParent(granparent);
     sibling = tempnode->getParent()->getRight();
   }
-  if(sibling->getred() == false && sibling->getLeft()->getred() == false && sibling->getRight()->getred() == false){//case 2
+  if(sibling->getred() == false && (sibling->getLeft() == NULL || sibling->getLeft()->getred() == false) && (sibling->getRight() == NULL || sibling->getRight()->getred() == false)){//case 2
     sibling->setred(true);
     tempnode = sibling->getParent();
   }
@@ -199,6 +218,10 @@ void deletefix(dNode*& tempnode, dNode*& treehead){
     sibling = tempnode->getParent()->getRight();
     tempnode = treehead;
   }
+}
+if(tempnode != NULL){
+  tempnode->setred(false);
+}
 }
 
 
