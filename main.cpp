@@ -14,6 +14,8 @@ void deleter(dNode* tempposition);
 void inserter(int num, dNode* & treehead);
 dNode* uncle(dNode* current);
 void runner(dNode*& current, dNode*& treehead);
+void deleteone(dNode*& treehead);
+void transplant(dNode*& topnode, dNode*& botnode, dNode*& treehead);
 
 int main(){
     dNode* treehead = NULL;
@@ -22,6 +24,7 @@ int main(){
       char add[50] = "file";
       char console[50] = "console";
       char display[50] = "display";
+      char deletes[50] = "delete";
       char quit[50] = "quit";
       cout << endl << "What would you like to do? (file, console, display, quit): ";
       cin >> i2n;
@@ -34,15 +37,60 @@ int main(){
       else if(strcmp(i2n, display) == 0){
         displays(treehead);
       }
+      else if(strcmp(i2n, deletes) == 0){
+        deleteone(treehead);
+      }
       else if(strcmp(i2n, quit) == 0){
         deleter(treehead);
         break;
       }
       else{
-        cout << "Invalid input options are: file, console, display, and quit" << endl;
+        cout << "Invalid input options are: file, console, display, delete, and quit" << endl;
       }
     }
     return 0;
+}
+
+void transplant(dNode*& topnode, dNode*& botnode, dNode*& treehead){
+  if(topnode->getParent() == NULL && topnode == treehead){
+    treehead = botnode;
+    botnode->setParent(NULL);
+  }
+  if(topnode == topnode->getParent()->getLeft()){
+    topnode->getParent()->setLeft(botnode);
+    botnode->setParent(topnode->getParent());
+  }
+  else{
+    topnode->getParent()->setRight(botnode);
+    botnode->setParent(topnode->getParent());
+  }
+}
+
+void deleteone(dNode*& treehead){
+  int in;
+  cout << endl << "What do you want to delete??: ";
+  cin >> in;
+  cin.ignore();
+  dNode* tempnode = treehead;
+  while(true){
+    if(tempnode->getint() < in){
+      if(tempnode->getRight() == NULL){
+	      cout << "This number does not exist. right" << endl;
+	      return;
+      }
+      tempnode = tempnode->getRight();      
+    }
+    else if(tempnode->getint() > in){
+      if(tempnode->getLeft() == NULL){
+	      cout << "This number does not exist. left" << endl;
+        return;
+      }
+      tempnode = tempnode->getLeft();
+    }
+    else{
+      cout << "found it!"<< tempnode->getint();
+    }
+  }
 }
 
 void files(dNode *& treehead){
