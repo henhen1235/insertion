@@ -16,6 +16,7 @@ dNode* uncle(dNode* current);
 void runner(dNode*& current, dNode*& treehead);
 void deleteone(dNode*& treehead);
 void transplant(dNode*& topnode, dNode*& botnode, dNode*& treehead);
+void deletefix(dNode*& tempnode, dNode*& treehead);
 
 int main(){
     dNode* treehead = NULL;
@@ -88,9 +89,66 @@ void deleteone(dNode*& treehead){
       tempnode = tempnode->getLeft();
     }
     else{
-      cout << "found it!"<< tempnode->getint();
+      bool redbool;
+      dNode* child;
+      if(tempnode->getLeft() == NULL && tempnode->getRight() != NULL){ // left child is NULL
+        redbool = tempnode->getred();
+        child = tempnode->getRight();
+        dNode* dele = tempnode;
+        transplant(dele, child, treehead);
+      }
+      else if(tempnode->getLeft() != NULL && tempnode->getRight() == NULL){ // right child is NULL
+        redbool = tempnode->getred();
+        child = tempnode->getLeft();
+        dNode* dele = tempnode;
+        transplant(dele, child, treehead);
+      }
+      else if(tempnode->getLeft() != NULL && tempnode->getRight() != NULL) {// both are not NULL
+        dNode* dele = tempnode;
+        tempnode = tempnode->getRight();
+        while(tempnode->getLeft() != NULL){
+          tempnode = tempnode->getLeft();
+        }
+        child = tempnode;
+        redbool = tempnode->getred();
+        if(child == child->getParent()->getLeft()){
+          child->getParent()->setLeft(NULL);
+        }
+        else{
+          child->getParent()->setRight(NULL);
+        }
+        dele->getRight()->setParent(child);
+        child->setRight(dele->getRight());
+        dele->setRight(NULL);
+        dele->getLeft()->setParent(child);
+        child->setLeft(dele->getLeft());
+        dele->setLeft(NULL);
+        if(dele == treehead);
+          child->setParent(NULL);
+          treehead = child;
+      }
+
+      if(redbool == false){
+        deletefix(child, treehead);
+      }
     }
   }
+}
+
+
+void deletefix(dNode*& tempnode, dNode*& treehead){
+  dNode* sibling;
+  if(tempnode == tempnode->getParent()->getLeft()){
+    sibling = tempnode->getParent()->getRight();
+  }
+  else{
+    sibling = tempnode->getParent()->getLeft();
+  }
+  if(sibling->getred() == true){
+    sibling->setred(false);
+    tempnode->getParent()->setred(true);
+  }
+
 }
 
 void files(dNode *& treehead){
