@@ -55,16 +55,16 @@ int main(){
 void transplant(dNode*& topnode, dNode*& botnode, dNode*& treehead){
   if(topnode->getParent() == NULL && topnode == treehead){
     treehead = botnode;
-    botnode->setParent(NULL);
   }
-  if(topnode == topnode->getParent()->getLeft()){
+  else if(topnode == topnode->getParent()->getLeft()){
     topnode->getParent()->setLeft(botnode);
-    botnode->setParent(topnode->getParent());
   }
   else{
     topnode->getParent()->setRight(botnode);
-    botnode->setParent(topnode->getParent());
   }
+  if (botnode != NULL) {
+    botnode->setParent(topnode->getParent());
+}
 }
 
 void deleteone(dNode*& treehead){
@@ -96,12 +96,14 @@ void deleteone(dNode*& treehead){
         child = tempnode->getRight();
         dNode* dele = tempnode;
         transplant(dele, child, treehead);
+        delete dele;
       }
       else if(tempnode->getLeft() != NULL && tempnode->getRight() == NULL){ // right child is NULL
         redbool = tempnode->getred();
         child = tempnode->getLeft();
         dNode* dele = tempnode;
         transplant(dele, child, treehead);
+        delete dele;
       }
       else if(tempnode->getLeft() != NULL && tempnode->getRight() != NULL) {// both are not NULL
         dNode* dele = tempnode;
@@ -110,27 +112,25 @@ void deleteone(dNode*& treehead){
           tempnode = tempnode->getLeft();
         }
         child = tempnode;
-        redbool = tempnode->getred();
-        if(child == child->getParent()->getLeft()){
-          child->getParent()->setLeft(NULL);
-        }
-        else{
-          child->getParent()->setRight(NULL);
-        }
-        dele->getRight()->setParent(child);
-        child->setRight(dele->getRight());
-        dele->setRight(NULL);
-        dele->getLeft()->setParent(child);
-        child->setLeft(dele->getLeft());
-        dele->setLeft(NULL);
-        if(dele == treehead){
-          child->setParent(NULL);
-          treehead = child;
-        }
-      }
+        redbool = child->getred();
+        dNode* childright = child->getRight();
 
-      if(redbool == false){
-        deletefix(child, treehead);
+        if(child != dele->getRight()){
+          transplant(child, childright, treehead);
+          child->setRight(dele->getRight());
+          child->getRight()->setParent(child);
+        }
+
+        transplant(dele, child, treehead);
+        child->setLeft(dele->getLeft());
+        child->getLeft()->setParent(child);
+        child->setred(dele->getred());
+
+        if(redbool == false){
+          deletefix(childright, treehead);
+        }
+
+        delete dele;
       }
     }
   }
@@ -145,7 +145,9 @@ void deletefix(dNode*& tempnode, dNode*& treehead){
   else{
     sibling = tempnode->getParent()->getLeft();
   }
-  if(sibling->getred() == true){
+
+
+  if(sibling->getred() == true){// case 1
     sibling->setred(false);
     tempnode->getParent()->setred(true);
 
@@ -158,28 +160,44 @@ void deletefix(dNode*& tempnode, dNode*& treehead){
     sibling->setParent(granparent);
     sibling = tempnode->getParent()->getRight();
   }
-  if(sibling->getred() == false && sibling->getLeft()->getred() == false && sibling->getRight()->getred() == false){
+  if(sibling->getred() == false && sibling->getLeft()->getred() == false && sibling->getRight()->getred() == false){//case 2
     sibling->setred(true);
     tempnode = sibling->getParent();
   }
-  if(sibling->getred() == false && sibling->getLeft()->getred() == true && sibling->getRight()->getred() == false){
-    sibling->getLeft()->setred(false);
-    sibling->setred(true);
+  else{ //case 3
+      if(sibling->getRight()->getred() == false){
+      sibling->getLeft()->setred(false);
+      sibling->setred(true);
 
+      dNode* templeft = sibling->getLeft();
+      tempnode->getParent()->setRight(templeft);
+      templeft->setParent(tempnode->getParent());
+      if(templeft->getRight() != NULL){
+        dNode* saved = templeft->getRight();
+        sibling->setLeft(saved);
+      }
+      else{
+        sibling->setLeft(NULL);
+      }
+      templeft->setRight(sibling);
+      sibling->setParent(templeft);
+      sibling = sibling->getParent();
+    }
+    //case 4
+    sibling->setred(tempnode->getParent()->getred());
+    tempnode->getParent()->setred(false);
+    sibling->getRight()->setred(false);
+
+
+    dNode* granparent = tempnode->getParent()->getParent();
     dNode* templeft = sibling->getLeft();
-    tempnode->getParent()->setRight(templeft);
+    tempnode->getParent()->setParent(sibling);
+    tempnode->getParent()->setLeft(templeft);
     templeft->setParent(tempnode->getParent());
-    if(templeft->getRight() != NULL){
-      dNode* saved = templeft->getRight();
-      sibling->setLeft(saved);
-    }
-    else{
-      sibling->setLeft(NULL);
-    }
-    templeft->setRight(sibling);
-    sibling->setParent(templeft);
-    sibling = sibling->getParent();
-    
+    sibling->setLeft(tempnode->getParent());
+    sibling->setParent(granparent);
+    sibling = tempnode->getParent()->getRight();
+    tempnode = treehead;
   }
 }
 
