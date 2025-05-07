@@ -27,7 +27,7 @@ int main(){
       char display[50] = "display";
       char deletes[50] = "delete";
       char quit[50] = "quit";
-      cout << endl << "What would you like to do? (file, console, display, quit): ";
+      cout << endl << "What would you like to do? (file, console, display, delete, quit): ";
       cin >> i2n;
       if(strcmp(i2n, add) == 0){ // adding from file
         files(treehead);
@@ -102,6 +102,38 @@ void deleteone(dNode*& treehead){
         transplant(dele, child, treehead);
         if(redbool == false){
           deletefix(child, treehead);
+        }
+        delete dele;
+      }
+      else if(tempnode->getLeft() == NULL && tempnode->getRight() == NULL){
+        redbool = tempnode->getred();
+        dNode* dele = tempnode;
+
+        if(dele == treehead){
+          treehead == NULL;
+          delete dele;
+          return;
+        }
+
+        dNode* nullNode = NULL;
+        
+        if(redbool == false){
+          if(dele == dele->getParent()->getLeft()){
+            dele->getParent()->setLeft(NULL);
+            deletefix(nullNode, treehead);
+          }
+          else{
+            dele->getParent()->setRight(NULL);
+            deletefix(nullNode, treehead);
+          }
+        }
+        else{
+          if(dele == dele->getParent()->getLeft()){
+            dele->getParent()->setLeft(NULL);
+          }
+          else{
+            dele->getParent()->setRight(NULL);
+          }
         }
         delete dele;
       }
