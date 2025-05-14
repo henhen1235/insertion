@@ -67,6 +67,8 @@ void transplant(dNode*& topnode, dNode*& botnode, dNode*& treehead){
 }
 }
 
+
+
 void deleteone(dNode*& treehead){
   if(treehead == NULL){
     cout << "empty";
@@ -170,23 +172,28 @@ void deleteone(dNode*& treehead){
         }
 
         transplant(dele, child, treehead);
-	cout << "Transported" << endl;
+	      cout << "Transported" << endl;
         child->setLeft(dele->getLeft());
         child->getLeft()->setParent(child);
-	child->setRight(dele);
+	      child->setRight(dele);
         child->setred(dele->getred());
-	dele->setRight(NULL);
-	dele->setLeft(NULL);
-	dele->setParent(child);
+	      dele->setRight(NULL);
+	      dele->setLeft(NULL);
+	      dele->setParent(child);
 
 	childright = child->getRight();
 
         if(redbool == false){
-	  cout << "running fix" << endl;
-	  displays(treehead);
+	        cout << "running fix" << endl;
           deletefix(childright, treehead);
 	}
 
+   if(dele == dele->getParent()->getLeft()){
+    dele->getParent()->setLeft(NULL);
+  }
+    else{
+    dele->getParent()->setRight(NULL);
+  }
 	delete dele;
 
       }
@@ -200,24 +207,29 @@ void deletefix(dNode* tempnode, dNode*& treehead){
   cout <<"starting delete fix"<< tempnode->getint() << endl;
   while(tempnode != NULL && tempnode != treehead && tempnode->getred() == false){
     dNode* sibling = NULL;
+    displays(treehead);
     if(tempnode->getParent() != NULL){
-      cout << tempnode->getParent()->getint() << endl;
+      cout << tempnode->getint() << endl;
       if(tempnode == tempnode->getParent()->getLeft()){
-	sibling = tempnode->getParent()->getRight();
+	      sibling = tempnode->getParent()->getRight();
       }
       else{
-	sibling = tempnode->getParent()->getLeft();
+	      sibling = tempnode->getParent()->getLeft();
       }
+    }
+    else{
+      break;
     }
 
   if(sibling == NULL){
+    cout << "null sib" << endl;
     tempnode = tempnode->getParent();
     continue;
   }
 
   if(tempnode == tempnode->getParent()->getRight()){
   if(sibling->getred() == true){// case 1
-    cout << "case 1" << endl;
+    cout << "case 1 right" << endl;
     sibling->setred(false);
 
     dNode* granparent = tempnode->getParent()->getParent();
@@ -225,53 +237,94 @@ void deletefix(dNode* tempnode, dNode*& treehead){
     dNode* parent = tempnode->getParent();
     parent->setred(true);
 
-    granparent->setLeft(sibling);
+    if(granparent != NULL){
+      if(parent == granparent->getLeft()){
+          granparent->setLeft(sibling);
+      }
+      else{
+        granparent->setRight(sibling);
+      }
+    }
+    else{
+      treehead = sibling;
+    }
+
+    if(tempright != NULL){
+      tempright->setParent(parent);
+    }
+
     sibling->setParent(granparent);
     parent->setParent(sibling);
     sibling->setRight(parent);
     parent->setLeft(tempright);
-    tempright->setParent(parent);
   }
   else if(sibling->getred() == false && (sibling->getLeft() == NULL || sibling->getLeft()->getred() == false) && (sibling->getRight() == NULL || sibling->getRight()->getred() == false)){//case 2
-    cout << "case 2" << endl;
+    cout << "case 2 right" << endl;
     sibling->setred(true);
     tempnode = sibling->getParent();
   }
   else{ //case 3
-      if(sibling->getLeft()->getred() == false){
-	cout<< "case 3" << endl;
-	sibling->getLeft()->setred(false);
-      sibling->setred(true);
+      if((sibling->getLeft() == NULL || sibling->getLeft()->getred() == false) && sibling->getRight()->getred() == true){
+	      cout<< "case 3 right" << endl;
+	      sibling->getRight()->setred(false);
+        sibling->setred(true);
 
-      dNode* templeft = sibling->getLeft();
-      tempnode->getParent()->setRight(templeft);
-      templeft->setParent(tempnode->getParent());
-      if(templeft->getRight() != NULL){
-        dNode* saved = templeft->getRight();
-        sibling->setLeft(saved);
+      dNode* tempright = sibling->getRight();
+      dNode* parent = tempnode->getParent();
+
+      parent->setLeft(tempright);
+      tempright->setParent(parent);
+
+      if(tempright->getLeft() != NULL){
+        dNode* saved = tempright->getLeft();
+        sibling->setRight(saved);
       }
       else{
-        sibling->setLeft(NULL);
+        sibling->setRight(NULL);
       }
-      templeft->setRight(sibling);
-      sibling->setParent(templeft);
+
+      tempright->setLeft(sibling);
+      sibling->setParent(tempright);
+
       sibling = sibling->getParent();
     }
     //case 4
-      cout << "case 4" << endl;
+      cout << "case 4 right" << endl;
     sibling->setred(tempnode->getParent()->getred());
     tempnode->getParent()->setred(false);
-    sibling->getRight()->setred(false);
 
+    if(sibling->getLeft() != NULL){
+      sibling->getLeft()->setred(false);
+    }
 
     dNode* granparent = tempnode->getParent()->getParent();
+    dNode* parent = tempnode->getParent();
     dNode* tempright = sibling->getRight();
-    tempnode->getParent()->setParent(sibling);
-    tempnode->getParent()->setLeft(templeft);
-    templeft->setParent(tempnode->getParent());
-    sibling->setLeft(tempnode->getParent());
+
+    if(granparent != NULL){
+      if(parent == granparent->getLeft()){
+          granparent->setLeft(sibling);
+      }
+      else{
+        granparent->setRight(sibling);
+      }
+    }
+    else{
+      treehead = sibling;
+    }
+
     sibling->setParent(granparent);
-    sibling = tempnode->getParent()->getRight();
+    parent->setParent(sibling);
+    parent->setLeft(tempright);
+
+
+    if(tempright != NULL){
+      tempright->setParent(parent);
+    }
+
+    sibling->setRight(parent);
+
+
     tempnode = treehead;
   }
 }
@@ -330,7 +383,9 @@ else{
   }
 }
 }
+
 if(tempnode != NULL){
+  cout << tempnode->getint() << "black" << endl; 
   tempnode->setred(false);
 }
 }
