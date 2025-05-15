@@ -123,12 +123,12 @@ void deleteone(dNode*& treehead){
         
         if(redbool == false){
           if(dele == dele->getParent()->getLeft()){
+            deletefix(dele, treehead);
             dele->getParent()->setLeft(NULL);
-            deletefix(nullNode, treehead);
           }
           else{
+            deletefix(dele, treehead);
             dele->getParent()->setRight(NULL);
-            deletefix(nullNode, treehead);
           }
         }
         else{
@@ -191,26 +191,28 @@ void deleteone(dNode*& treehead){
 	int tempnodeint = tempnode->getint();
 	int deleint = dele->getint();
 
-	tempnode->setint(deleint);
+	child->setint(deleint);
 	dele->setint(tempnodeint);
-	
-        if(redbool == false){
-          cout << "running fix" << endl;
-          deletefix(dele, treehead);
+
+	cout << "child: "<< child->getint() << endl;
+
+  if(redbool == false){
+    cout << "running fix" << endl;
+    deletefix(child, treehead);
 	}
 
 	cout << "delete" << dele->getint() << endl;
 	cout << "delete parent" << dele->getParent()->getint() << endl;
 	cout << "child" << child->getint() << endl;
 	cout << "child parent" << child->getParent()->getint() << endl;
-	if(dele == dele->getParent()->getLeft()){
-	  dele->getParent()->setLeft(NULL);
+	if(child == child->getParent()->getLeft()){
+	  child->getParent()->setLeft(NULL);
 	}
 	else{
-	  dele->getParent()->setRight(NULL);
+	  child->getParent()->setRight(NULL);
 	}
-	cout << "dele = " << dele->getint() << endl;
-	delete dele;
+	cout << "child = " << child->getint() << endl;
+	delete child;
 
       }
       return;
