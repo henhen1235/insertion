@@ -17,6 +17,8 @@ void runner(dNode*& current, dNode*& treehead);
 void deleteone(dNode*& treehead);
 void transplant(dNode*& topnode, dNode*& botnode, dNode*& treehead);
 void deletefix(dNode* tempnode, dNode*& treehead);
+void searc(dNode* treehead);
+
 
 int main(){
     dNode* treehead = NULL;
@@ -27,7 +29,8 @@ int main(){
       char display[50] = "display";
       char deletes[50] = "delete";
       char quit[50] = "quit";
-      cout << endl << "What would you like to do? (file, console, display, delete, quit): ";
+      char sear[50] = "search";
+      cout << endl << "What would you like to do? (file, search, console, display, delete, quit): ";
       cin >> i2n;
       if(strcmp(i2n, add) == 0){ // adding from file
         files(treehead);
@@ -38,6 +41,9 @@ int main(){
       else if(strcmp(i2n, display) == 0){
         displays(treehead);
       }
+      else if(strcmp(i2n, sear) == 0){
+        searc(treehead);
+      }
       else if(strcmp(i2n, deletes) == 0){
         deleteone(treehead);
       }
@@ -46,10 +52,46 @@ int main(){
         break;
       }
       else{
-        cout << "Invalid input options are: file, console, display, delete, and quit" << endl;
+        cout << "Invalid input options are: file, console, display, delete, search, and quit" << endl;
       }
     }
     return 0;
+}
+void searc(dNode* treehead){
+  bool exist = false;
+  if(treehead == NULL){
+    cout << "empty";
+    return;
+  }
+  int in;
+  cout << endl << "What do you want to search??: ";
+  cin >> in;
+  cin.ignore();
+  dNode* tempnode = treehead;
+  while(true){
+    if(tempnode->getint() < in){
+      if(tempnode->getRight() == NULL){
+	      break;
+      }
+      tempnode = tempnode->getRight();      
+    }
+    else if(tempnode->getint() > in){
+      if(tempnode->getLeft() == NULL){
+        break;
+      }
+      tempnode = tempnode->getLeft();
+    }
+    else{
+      exist = true;
+      break;
+    }
+}
+if(exist == false){
+  cout << "This number does not exist" << endl;
+}
+else{
+  cout << "This number does exist"<< endl;
+}
 }
 
 void transplant(dNode*& topnode, dNode*& botnode, dNode*& treehead){
