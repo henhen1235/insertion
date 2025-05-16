@@ -253,6 +253,7 @@ void deleteone(dNode*& treehead){
 
 void deletefix(dNode* tempnode, dNode*& treehead){
   while(tempnode != NULL && tempnode != treehead && tempnode->getred() == false){
+    displays(treehead);
     dNode* sibling = NULL;
     if(tempnode->getParent() != NULL){
       if(tempnode == tempnode->getParent()->getLeft()){
@@ -270,9 +271,11 @@ void deletefix(dNode* tempnode, dNode*& treehead){
     tempnode = tempnode->getParent();
     continue;
   }
+  cout << sibling->getint() << endl;
 
   if(tempnode == tempnode->getParent()->getRight()){
   if(sibling->getred() == true){// case 1
+       cout << "case 1 right" << endl;
     sibling->setred(false);
 
     dNode* granparent = tempnode->getParent()->getParent();
@@ -302,12 +305,15 @@ void deletefix(dNode* tempnode, dNode*& treehead){
     parent->setLeft(tempright);
   }
   else if(sibling->getred() == false && (sibling->getLeft() == NULL || sibling->getLeft()->getred() == false) && (sibling->getRight() == NULL || sibling->getRight()->getred() == false)){//case 2
+       cout << "case 2 right" << endl;
     sibling->setred(true);
     tempnode = sibling->getParent();
   }
   else{ //case 3
       if((sibling->getLeft() == NULL || sibling->getLeft()->getred() == false) && sibling->getRight()->getred() == true){
-	      sibling->getRight()->setred(false);
+   cout << "case 3 right" << endl;
+
+	sibling->getRight()->setred(false);
         sibling->setred(true);
 
       dNode* tempright = sibling->getRight();
@@ -330,6 +336,8 @@ void deletefix(dNode* tempnode, dNode*& treehead){
       sibling = sibling->getParent();
     }
     //case 4
+         cout << "case 4 right" << endl;
+
     sibling->setred(tempnode->getParent()->getred());
     tempnode->getParent()->setred(false);
 
@@ -370,6 +378,7 @@ void deletefix(dNode* tempnode, dNode*& treehead){
 }
 else{
   if(sibling->getred() == true){// case 1
+       cout << "case 1 left" << endl;
     sibling->setred(false);
 
     dNode* granparent = tempnode->getParent()->getParent();
@@ -399,12 +408,14 @@ else{
     parent->setRight(templeft);
   }
   else if(sibling->getred() == false && (sibling->getLeft() == NULL || sibling->getLeft()->getred() == false) && (sibling->getRight() == NULL || sibling->getRight()->getred() == false)){//case 2
+     cout << "case 2 left" << endl;
     sibling->setred(true);
     tempnode = sibling->getParent();
   }
   else{ //case 3
-    if((sibling->getLeft() == NULL || sibling->getLeft()->getred() == false) && sibling->getRight()->getred() == true){
-      sibling->getRight()->setred(false);
+    if((sibling->getRight() == NULL || sibling->getRight()->getred() == false) && sibling->getLeft()->getred() == true){
+     cout << "case 3 left" << endl;
+      sibling->getLeft()->setred(false);
       sibling->setred(true);
 
       dNode* parent = tempnode->getParent();
@@ -413,30 +424,32 @@ else{
       parent->setRight(templeft);
       templeft->setParent(parent);
       
-      if(templeft->getLeft() != NULL){
-        dNode* saved = templeft->getLeft();
+      if(templeft->getRight() != NULL){
+        dNode* saved = templeft->getRight();
         sibling->setLeft(saved);
       }
       else{
         sibling->setLeft(NULL);
       }
       
-      templeft->setLeft(sibling);
+      templeft->setRight(sibling);
       sibling->setParent(templeft);
 
       sibling = sibling->getParent();
     }
     //case 4
+    displays(treehead);
+    cout << "case 4 left" << endl;
     sibling->setred(tempnode->getParent()->getred());
     tempnode->getParent()->setred(false);
 
-    if(sibling->getLeft() != NULL){
-      sibling->getLeft()->setred(false);
+    if(sibling->getRight() != NULL){
+      sibling->getRight()->setred(false);
     }
 
     dNode* parent = tempnode->getParent();
     dNode* granparent = parent->getParent();
-    dNode* templeft = sibling->getRight();
+    dNode* templeft = sibling->getLeft();
 
     if(granparent != NULL){
       if(parent == granparent->getLeft()){
@@ -452,13 +465,13 @@ else{
 
     sibling->setParent(granparent);
     parent->setParent(sibling);
-    parent->setLeft(templeft);
+    parent->setRight(templeft);//here
 
     if(templeft != NULL){
       templeft->setParent(parent);
     }
 
-    sibling->setRight(parent);
+    sibling->setLeft(parent);
     
     tempnode = treehead;
   }
