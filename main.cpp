@@ -124,14 +124,14 @@ void deleteone(dNode*& treehead){
   while(true){
     if(tempnode->getint() < in){
       if(tempnode->getRight() == NULL){
-	      cout << "This number does not exist. right" << endl;
+	      cout << "This number does not exist" << endl;
 	      return;
       }
       tempnode = tempnode->getRight();      
     }
     else if(tempnode->getint() > in){
       if(tempnode->getLeft() == NULL){
-	        cout << "This number does not exist. left" << endl;
+	        cout << "This number does not exist" << endl;
         return;
       }
       tempnode = tempnode->getLeft();
@@ -140,7 +140,6 @@ void deleteone(dNode*& treehead){
       bool redbool;
       dNode* child;
       if(tempnode->getLeft() == NULL && tempnode->getRight() != NULL){ // left child is NULL
-	cout << "left NULL" << endl;
 	redbool = tempnode->getred();
         child = tempnode->getRight();
         dNode* dele = tempnode;
@@ -151,7 +150,6 @@ void deleteone(dNode*& treehead){
         delete dele;
       }
       else if(tempnode->getLeft() == NULL && tempnode->getRight() == NULL){// double NULL
-	cout << "double NULL" << endl;
 	redbool = tempnode->getred();
         dNode* dele = tempnode;
 
@@ -184,7 +182,6 @@ void deleteone(dNode*& treehead){
         delete dele;
       }
       else if(tempnode->getLeft() != NULL && tempnode->getRight() == NULL){ // right child is NULL
-	cout << "right null" << endl;
 	redbool = tempnode->getred();
         child = tempnode->getLeft();
         dNode* dele = tempnode;
@@ -196,7 +193,6 @@ void deleteone(dNode*& treehead){
       }
       else if(tempnode->getLeft() != NULL && tempnode->getRight() != NULL) {// both are not NULL
         dNode* dele = tempnode;
-	cout << "double not null" << endl;
         tempnode = tempnode->getRight();
 	dNode* pastnode = tempnode;
         while(tempnode->getLeft() != NULL){
@@ -236,24 +232,16 @@ void deleteone(dNode*& treehead){
 	child->setint(deleint);
 	dele->setint(tempnodeint);
 
-	cout << "child: "<< child->getint() << endl;
-
   if(redbool == false){
-    cout << "running fix" << endl;
     deletefix(child, treehead);
 	}
 
-	cout << "delete" << dele->getint() << endl;
-	cout << "delete parent" << dele->getParent()->getint() << endl;
-	cout << "child" << child->getint() << endl;
-	cout << "child parent" << child->getParent()->getint() << endl;
 	if(child == child->getParent()->getLeft()){
 	  child->getParent()->setLeft(NULL);
 	}
 	else{
 	  child->getParent()->setRight(NULL);
 	}
-	cout << "child = " << child->getint() << endl;
 	delete child;
 
       }
@@ -264,12 +252,9 @@ void deleteone(dNode*& treehead){
 
 
 void deletefix(dNode* tempnode, dNode*& treehead){
-  cout <<"starting delete fix"<< tempnode->getint() << endl;
   while(tempnode != NULL && tempnode != treehead && tempnode->getred() == false){
     dNode* sibling = NULL;
-    displays(treehead);
     if(tempnode->getParent() != NULL){
-      cout << tempnode->getint() << endl;
       if(tempnode == tempnode->getParent()->getLeft()){
 	      sibling = tempnode->getParent()->getRight();
       }
@@ -282,14 +267,12 @@ void deletefix(dNode* tempnode, dNode*& treehead){
     }
 
   if(sibling == NULL){
-    cout << "null sib" << endl;
     tempnode = tempnode->getParent();
     continue;
   }
 
   if(tempnode == tempnode->getParent()->getRight()){
   if(sibling->getred() == true){// case 1
-    cout << "case 1 right" << endl;
     sibling->setred(false);
 
     dNode* granparent = tempnode->getParent()->getParent();
@@ -319,13 +302,11 @@ void deletefix(dNode* tempnode, dNode*& treehead){
     parent->setLeft(tempright);
   }
   else if(sibling->getred() == false && (sibling->getLeft() == NULL || sibling->getLeft()->getred() == false) && (sibling->getRight() == NULL || sibling->getRight()->getred() == false)){//case 2
-    cout << "case 2 right" << endl;
     sibling->setred(true);
     tempnode = sibling->getParent();
   }
   else{ //case 3
       if((sibling->getLeft() == NULL || sibling->getLeft()->getred() == false) && sibling->getRight()->getred() == true){
-	      cout<< "case 3 right" << endl;
 	      sibling->getRight()->setred(false);
         sibling->setred(true);
 
@@ -349,7 +330,6 @@ void deletefix(dNode* tempnode, dNode*& treehead){
       sibling = sibling->getParent();
     }
     //case 4
-      cout << "case 4 right" << endl;
     sibling->setred(tempnode->getParent()->getred());
     tempnode->getParent()->setred(false);
 
@@ -390,7 +370,6 @@ void deletefix(dNode* tempnode, dNode*& treehead){
 }
 else{
   if(sibling->getred() == true){// case 1
-    cout << "case 1 left" << endl;
     sibling->setred(false);
 
     dNode* granparent = tempnode->getParent()->getParent();
@@ -420,13 +399,11 @@ else{
     parent->setRight(templeft);
   }
   else if(sibling->getred() == false && (sibling->getLeft() == NULL || sibling->getLeft()->getred() == false) && (sibling->getRight() == NULL || sibling->getRight()->getred() == false)){//case 2
-    cout << "case 2 left" << endl;
     sibling->setred(true);
     tempnode = sibling->getParent();
   }
   else{ //case 3
     if((sibling->getLeft() == NULL || sibling->getLeft()->getred() == false) && sibling->getRight()->getred() == true){
-      cout << "case 3 left" << endl;
       sibling->getRight()->setred(false);
       sibling->setred(true);
 
@@ -450,7 +427,6 @@ else{
       sibling = sibling->getParent();
     }
     //case 4
-    cout << "case 4 left" << endl;
     sibling->setred(tempnode->getParent()->getred());
     tempnode->getParent()->setred(false);
 
@@ -490,7 +466,6 @@ else{
 }
 
 if(tempnode != NULL){
-  cout << tempnode->getint() << "black" << endl; 
   tempnode->setred(false);
 }
 }
@@ -800,8 +775,8 @@ void displays(dNode* top){//diplay everything
 }
 
 void displayrunner(dNode* tempposition, int depth){// display runner function
-  if(tempposition->getLeft() != NULL){//go down the right nodes
-    displayrunner(tempposition->getLeft(), depth + 1);
+  if(tempposition->getRight() != NULL){//go down the right nodes
+    displayrunner(tempposition->getRight(), depth + 1);
   }
   for(int x = 0; x < depth; x++){//orint
     cout << '\t';
@@ -812,8 +787,8 @@ void displayrunner(dNode* tempposition, int depth){// display runner function
   else{
     cout << tempposition->getint()<< "r" << endl;
   }
-  if(tempposition->getRight() != NULL){//go down the left nodes
-    displayrunner(tempposition->getRight(), depth + 1);
+  if(tempposition->getLeft() != NULL){//go down the left nodes
+    displayrunner(tempposition->getLeft(), depth + 1);
   }
 }
 
